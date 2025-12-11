@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> solution(int n, int m, vector<char> figures) {
+    vector<vector<int>> grid(n, vector<int>(m, 0));
+
+    auto getShape = [](char c) -> vector<vector<int>> {
+        switch (c) {
+            case 'A':
+                return {{1}};
+            case 'B':
+                return {{1, 1, 1}};
+            case 'C':
+                return {{1, 1},
+                        {1, 1}};
+            case 'D':
+                return {{1, 0},
+                        {1, 1},
+                        {1, 0}};
+            case 'E':
+            default:
+                return {{0, 1, 0},
+                        {1, 1, 1}};
+        }
+    };
+
+    for (int idx = 0; idx < (int)figures.size(); idx++) {
+        auto shape = getShape(figures[idx]);
+        int h = shape.size();
+        int w = shape[0].size();
+
+        bool placed = false;
+        for (int i = 0; i + h <= n && !placed; i++) {
+            for (int j = 0; j + w <= m && !placed; j++) {
+                bool ok = true;
+                for (int x = 0; x < h && ok; x++) {
+                    for (int y = 0; y < w; y++) {
+                        if (shape[x][y] == 1 &&
+                            grid[i + x][j + y] != 0) {
+                            ok = false;
+                        }
+                    }
+                }
+                if (ok) {
+                    for (int x = 0; x < h; x++) {
+                        for (int y = 0; y < w; y++) {
+                            if (shape[x][y] == 1) {
+                                grid[i + x][j + y] = idx + 1;
+                            }
+                        }
+                    }
+                    placed = true;
+                }
+            }
+        }
+    }
+    return grid;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+
+    int k;
+    cin >> k;
+
+    vector<char> figures(k);
+    for (int i = 0; i < k; i++) {
+        cin >> figures[i];
+    }
+
+    auto ans = solution(n, m, figures);
+
+    for (auto &row : ans) {
+        for (int x : row) {
+            cout << x << " ";
+        }
+        cout << "\n";
+    }
+
+    return 0;
+}
